@@ -27,8 +27,8 @@ export class HomePage {
   };
 
   cameraPicturesOpts: CameraPreviewPictureOptions = {
-    width: 400,
-    height: 400,
+    width: 200,
+    height: 200,
     quality: 50,
   };
 
@@ -37,9 +37,12 @@ export class HomePage {
   blob: any;
   anyBuffer: ArrayBuffer;
   anyBase64: Base64;
-  redV: []
-  greenV: Number[]
-  blueV: []
+
+  currentedV: number[]
+  currentGreenV: number[]
+  currentBlueV: number[]
+
+  myImage: Jimp;
 
   constructor(private cameraPreview: CameraPreview, private file: File) {
     this.camOn();
@@ -48,7 +51,7 @@ export class HomePage {
   camOn() {
     this.cameraPreview.startCamera(this.cameraPreviewOpts).then(
       (res) => {
-        alert(res);
+        alert("cameraOn" + res);
       },
       (err) => {
         alert(err);
@@ -65,74 +68,80 @@ export class HomePage {
         let image = document.getElementById("image");
         image.setAttribute("src", this.picture);
 
-        alert(imageData);
+        alert("takePicture" + imageData);
         this.writeFile(this.picture, "baseGlubGlub");
       }),
       (err) => {
         alert(err);
       };
-    /*this.readImage(new Buffer(this.code, "base64"));*/
-    this.anyBuffer = this._base64ToArrayBuffer(this.code)
-    const { red, green, blue, x, y } = this.readImage(this.anyBuffer);
+      this.anyBuffer = this._base64ToArrayBuffer(this.code)
+      this.readImage(this.anyBuffer);
 
   }
 
   readImage(encodeB64: any) {
-    let redV = [];
-    let greenV = [];
-    let blueV = [];
     let width: any;
     let height: any;
 
-    Jimp.read(encodeB64)
+
+     Jimp.read(encodeB64)
       .then((image) => {
         alert("Sucess!" + image.bitmap.width);
         width = image.bitmap.width;
         height = image.bitmap.height;
+        this.myImage = image;
 
-        image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (
-          x,
-          y,
-          idx
-        ) {
-          // x, y is the position of this pixel on the image
-          // idx is the position start position of this rgba tuple in the bitmap Buffer
-          // this is the image
-          //x = w, y = h; As interações acontecem de todos os x para cada y.
-         let red = this.bitmap.data[idx + 0];
-         let green = this.bitmap.data[idx + 1];
-         let blue = this.bitmap.data[idx + 2];
-          //alpha = this.bitmap.data[idx + 3];
-          console.log(blue);
+        const chanels = this.scanImage(this.myImage, width, height);
 
-          redV.push(red);
-          greenV.push(green);
-          blueV.push(blue);
-          // rgba values run from 0 - 255
-          // e.g. this.bitmap.data[idx] = 0; // removes red from this pixel
+        this.writeFile(chanels.b, 'chanelsBlue');
 
-        }
-        );
       })
       .catch((err) => {
         alert(err);
       });
-    alert(redV)
 
-    return {
-      red: redV,
-      green: greenV,
-      blue: blueV,
-      x: width,
-      y: height,
-    };
 
   }
 
-  sumVector(redV: [], greenV: [], blueV: [], nLine: number, nColumn: number) {
+  scanImage(image: Jimp, width: number, height: number) {
+    let sRed = new Array(width + 1).join("0").split("").map(parseFloat);;
+
+    let sGreen = new Array(width + 1).join("0").split("").map(parseFloat);;
+    let sBlue = new Array(width + 1).join("0").split("").map(parseFloat);;
+
+    for (let line = 0; line < height; line++){
+      for (let column = 0; column < width; column++){
+        sRed[column] += Jimp.intToRGBA(image.getPixelColor(column, line)).r;
+        sGreen[column] += Jimp.intToRGBA(image.getPixelColor(column, line)).g;
+        sBlue[column] += Jimp.intToRGBA(image.getPixelColor(column, line)).b;
+      }
+    }
+
+    sRed = sRed.map(function (value) {
+      return value / width;
+    });
+
+    sGreen = sGreen.map(function (value) {
+      return value / width;
+    });
+
+    sBlue = sBlue.map(function (value) {
+      return value / width;
+    });
+
+    return {
+      r: sRed,
+      g: sGreen,
+      b: sBlue
+     }
+    // alert(`height: ${height} width: ${width} pixel: ${Jimp.intToRGBA(image.getPixelColor(7, 6)).r}`);
+  }
+
+  sumVectorAndAvg(redV: [], greenV: [], blueV: [], nLine: number, nColumn: number) {
     let sumRedV = new Array(nColumn + 1).join("0").split("").map(parseFloat);
     let sumGreenV = new Array(nColumn + 1).join("0").split("").map(parseFloat);
     let sumBlueV = new Array(nColumn + 1).join("0").split("").map(parseFloat);
+
 
     for (let cont = 1; cont < redV.length; cont++){
       sumRedV[cont % nColumn] += redV[cont];
@@ -165,3 +174,4 @@ export class HomePage {
     return bytes.buffer;
   }
 }
+
