@@ -5,8 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
+import { BrightnessScrollComponent } from '../components/brightness-scroll/brightness-scroll.component';
 
+import { Appbright } from '../components/bright-scroll/bright-scroll.component'
 
+import { Ng5SliderModule } from 'ng5-slider';
 
 @NgModule({
   imports: [
@@ -14,7 +17,8 @@ import { HomePageRoutingModule } from './home-routing.module';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
+    Ng5SliderModule,
   ],
-  declarations: [HomePage]
+  declarations: [HomePage, BrightnessScrollComponent, Appbright]
 })
 export class HomePageModule {}

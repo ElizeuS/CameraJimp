@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { HomePage } from './home.page';
+import { BrightnessScrollComponent } from './brightness-scroll.component';
 
-describe('HomePage', () => {
-  let component: HomePage;
-  let fixture: ComponentFixture<HomePage>;
+describe('BrightnessScrollComponent', () => {
+  let component: BrightnessScrollComponent;
+  let fixture: ComponentFixture<BrightnessScrollComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HomePage ],
+      declarations: [ BrightnessScrollComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HomePage);
+    fixture = TestBed.createComponent(BrightnessScrollComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

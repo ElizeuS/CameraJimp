@@ -1,9 +1,30 @@
 <ion-header [translucent]="true">
+<ion-button (click)="takePicture()">Take</ion-button>
+  <ion-button (click)="stopCam()">Stop</ion-button>
 
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-button (click)="takePicture()">Take</ion-button>
+  <div id="div1"> <img src="" id="image"></div>
 
-  <img src="" id="image">
+  <div id="div2">
+
+    <!-- <app-brightness-scroll></app-brightness-scroll> -->
+
+    <app-bright-scroll></app-bright-scroll>
+<!--
+     <ion-range
+      vertical="true"
+      min="0"
+      max="1"
+      step="0.2"
+      [(ngModel)]="brightnessModel"
+      (ionChange)="adjustBrightness()"
+      debounce="100"
+      >
+        <ion-icon size="small" slot="start" name="sunny"></ion-icon>
+        <ion-icon slot="end" name="sunny"></ion-icon>
+      </ion-range> -->
+  </div>
+
 </ion-content>

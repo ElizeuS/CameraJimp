@@ -7,6 +7,21 @@ import {
 } from "@ionic-native/camera-preview/ngx";
 import { Base64 } from "js-base64";
 import { File } from "@ionic-native/file/ngx";
+import { Brightness } from '@ionic-native/brightness/ngx';
+
+import { Options } from 'ng5-slider';
+
+interface RangeSliderModel {
+  minValue: number;
+  maxValue: number;
+  options: Options;
+
+}
+
+interface SimpleSliderModel {
+  value: number;
+  options: Options;
+ }
 
 @Component({
   selector: "app-home",
@@ -32,20 +47,30 @@ export class HomePage {
     quality: 50,
   };
 
+
   picture: any;
   code: string;
   blob: any;
   anyBuffer: ArrayBuffer;
   anyBase64: Base64;
 
-  currentedV: number[]
+  currentRedV: number[]
   currentGreenV: number[]
   currentBlueV: number[]
 
   myImage: Jimp;
 
-  constructor(private cameraPreview: CameraPreview, private file: File) {
-    this.camOn();
+  brightnessModel = 0.4;
+  value = 0.5;
+
+  constructor(private cameraPreview: CameraPreview, private file: File, private brightness: Brightness) {
+    this.brightness.setBrightness(this.brightnessModel);
+
+    try {
+      this.camOn();
+    } catch (error) {
+      alert(error);
+    }
   }
 
   camOn() {
@@ -59,16 +84,17 @@ export class HomePage {
     );
   }
 
+
   takePicture() {
     this.cameraPreview
-      .takePicture(this.cameraPicturesOpts)
+      .takeSnapshot(this.cameraPicturesOpts) /* Opção mais rápida e não possue o som do obturador como no TakePicture() */
       .then((imageData) => {
         this.picture = "data:image/jpeg;base64," + imageData;
         this.code = imageData;
         let image = document.getElementById("image");
         image.setAttribute("src", this.picture);
 
-        alert("takePicture" + imageData);
+        // alert("takePicture" + imageData);
         this.writeFile(this.picture, "baseGlubGlub");
       }),
       (err) => {
@@ -86,14 +112,12 @@ export class HomePage {
 
      Jimp.read(encodeB64)
       .then((image) => {
-        alert("Sucess!" + image.bitmap.width);
+        // alert("Sucess!" + image.bitmap.width);
         width = image.bitmap.width;
         height = image.bitmap.height;
         this.myImage = image;
 
-        const chanels = this.scanImage(this.myImage, width, height);
-
-        this.writeFile(chanels.b, 'chanelsBlue');
+       this.scanImage(this.myImage, width, height);
 
       })
       .catch((err) => {
@@ -117,24 +141,25 @@ export class HomePage {
       }
     }
 
-    sRed = sRed.map(function (value) {
+    this.currentRedV = sRed.map(function (value) {
       return value / width;
     });
 
-    sGreen = sGreen.map(function (value) {
+    this.currentGreenV = sGreen.map(function (value) {
       return value / width;
     });
 
-    sBlue = sBlue.map(function (value) {
+    this.currentBlueV = sBlue.map(function (value) {
       return value / width;
     });
 
-    return {
-      r: sRed,
-      g: sGreen,
-      b: sBlue
-     }
+    this.takePicture();
+
     // alert(`height: ${height} width: ${width} pixel: ${Jimp.intToRGBA(image.getPixelColor(7, 6)).r}`);
+  }
+
+  stopCam() {
+    this.cameraPreview.stopCamera();
   }
 
   sumVectorAndAvg(redV: [], greenV: [], blueV: [], nLine: number, nColumn: number) {
