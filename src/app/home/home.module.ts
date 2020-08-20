@@ -7,9 +7,11 @@ import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 import { BrightnessScrollComponent } from '../components/brightness-scroll/brightness-scroll.component';
 
-import { Appbright } from '../components/bright-scroll/bright-scroll.component'
+import { Appbright } from '../components/bright-scroll/bright-scroll.component';
+import { GraphComponent } from '../components/graph/graph.component'
 
 import { Ng5SliderModule } from 'ng5-slider';
+
 
 @NgModule({
   imports: [
@@ -19,6 +21,6 @@ import { Ng5SliderModule } from 'ng5-slider';
     HomePageRoutingModule,
     Ng5SliderModule,
   ],
-  declarations: [HomePage, BrightnessScrollComponent, Appbright]
+  declarations: [HomePage, BrightnessScrollComponent, Appbright, GraphComponent]
 })
 export class HomePageModule {}

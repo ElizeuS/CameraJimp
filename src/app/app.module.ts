@@ -16,7 +16,7 @@ import { File } from '@ionic-native/file/ngx';
 
 import * as Jimp from 'jimp';
 
-
+import * as Highcharts from "highcharts";
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,7 +29,7 @@ import * as Jimp from 'jimp';
     Jimp,
     File,
     Brightness,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
   ],
   bootstrap: [AppComponent]
 })

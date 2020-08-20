@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import * as Jimp from "jimp";
 import {
   CameraPreview,
@@ -28,6 +28,8 @@ interface SimpleSliderModel {
   templateUrl: "home.page.html",
   styleUrls: ["home.page.scss"],
 })
+
+
 export class HomePage {
   cameraPreviewOpts: CameraPreviewOptions = {
     x: 200, //Posição em que a câmera vai aparecer
@@ -46,6 +48,8 @@ export class HomePage {
     height: 200,
     quality: 50,
   };
+
+  arrayFamily: number[] = [1, 2, 3]
 
 
   picture: any;
@@ -73,10 +77,11 @@ export class HomePage {
     }
   }
 
-  camOn() {
+ async camOn() {
     this.cameraPreview.startCamera(this.cameraPreviewOpts).then(
       (res) => {
         alert("cameraOn" + res);
+        this.takePicture()
       },
       (err) => {
         alert(err);
@@ -84,11 +89,15 @@ export class HomePage {
     );
   }
 
+  ngOnInit() {
+    console.log(this.arrayFamily)
+  }
 
-  takePicture() {
+  async takePicture() {
     this.cameraPreview
       .takeSnapshot(this.cameraPicturesOpts) /* Opção mais rápida e não possue o som do obturador como no TakePicture() */
       .then((imageData) => {
+        alert(imageData);
         this.picture = "data:image/jpeg;base64," + imageData;
         this.code = imageData;
         let image = document.getElementById("image");
@@ -153,6 +162,7 @@ export class HomePage {
       return value / width;
     });
 
+
     this.takePicture();
 
     // alert(`height: ${height} width: ${width} pixel: ${Jimp.intToRGBA(image.getPixelColor(7, 6)).r}`);
@@ -198,5 +208,14 @@ export class HomePage {
     }
     return bytes.buffer;
   }
+
+  ngDoCheck(): void {
+    //Called every time that the input properties of a component or a directive are checked. Use it to extend change detection by performing a custom check.
+    //Add 'implements DoCheck' to the class.
+    //this.arrayFamily.push(5)
+
+  }
 }
 
+
+//https://www.npmjs.com/package/highcharts
