@@ -6,96 +6,132 @@ import * as Highcharts from "highcharts";
   templateUrl: "./graph.component.html",
   styleUrls: ["./graph.component.scss"],
 })
-
-
 export class GraphComponent implements OnInit {
+  @Input() graphData;
+  @Input() typeChart;
+  @Input() yAxisText;
+  @Input() xAxisText;
+  @Input() graphTitleText;
+  @Input() rgbData: [];
 
-  @Input() getFamily;
+
+  myChart: Highcharts.Chart;
 
   constructor() {}
 
   handleGraphic() {
-    Highcharts.chart('container', {
+
+
+    this.myChart = Highcharts.chart("container", {
       chart: {
-        type: 'spline',
-        animation: true, // don't animate in old IE
-        marginRight: 10,
+        type: this.typeChart,
+        zoomType: "xy",
+        width: window.screen.width,
+        height: 350,
+        backgroundColor: "black",
         events: {
-          load: function () {
-
-            // set up the updating of the chart each second
-            var series = this.series[0];
-            setInterval(function () {
-              var x = (new Date()).getTime(), // current time
-                y = Math.random();
-              series.addPoint([x, y], true, true);
-            }, 1000);
-          }
-        }
-      },
-
-      time: {
-        useUTC: false
-      },
-
-      title: {
-        text: 'Live random data'
-      },
-      xAxis: {
-        type: 'datetime',
-        tickPixelInterval: 150
+          load: function () {},
+        },
       },
       yAxis: {
         title: {
-          text: 'Value'
+          text: this.yAxisText,
+          style: { color: "#ffffff" },
         },
-        plotLines: [{
-          value: 0,
-          width: 1,
-          color: '#808080'
-        }]
+      },
+      xAxis: {
+        title: {
+          text: this.xAxisText,
+          style: { color: "#ffffff" },
+        },
       },
       tooltip: {
-        headerFormat: '<b>{series.name}</b><br/>',
-        pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
+        headerFormat: "<b>{series.name}</b><br/>",
+        pointFormat: "Pixel/(θ)/(λ): {point.x:4f}<br/>RIU: {point.y:.4f}",
+      },
+      title: {
+        text: this.graphTitleText,
+        margin: 0, //margem do titulo para o gráfico
+        style: { color: "#ffffff" },
       },
       legend: {
-        enabled: false
+        backgroundColor: "#5F5A59",
+        shadow: true,
+        layout: "vertical",
+        width: 100,
+        maxHeight: 30,
+        itemMarginTop: 0,
+        itemMarginBottom: 0,
+
+        //Estilo da legenda padrão
+        itemStyle: {
+          color: "#ffffff",
+          fontWeight: "bold",
+        },
+        //Estilo da legenda ao clicar
+        itemHiddenStyle: {
+          color: "#AEAEAE",
+        },
+      },
+      plotOptions: {
+        series: {
+          allowPointSelect: true,
+          color: "rgba(255, 0, 0, 1)",
+          showInLegend: true,
+        },
       },
       exporting: {
-        enabled: false
+        enabled: true,
+        csv: {
+          itemDelimiter: ",",
+        },
       },
-      series: [{
-        name: 'Random data',
-        type: undefined,
-        data: (function () {
-          // generate an array of random data
-          var data = [],
-            time = (new Date()).getTime(),
-            i;
-
-          for (i = -19; i <= 0; i += 1) {
-            data.push({
-              x: time + i * 1000,
-              y: Math.random()
-            });
-          }
-          return data;
-        }())
-      }]
-
+      series: [
+        {
+          name: "Pixel",
+          type: undefined, //No Ionic 4, se faltar essa parte dar um erro que pode demorar em media 4 horas
+          data: [],
+          marker: {
+            color: "rgba(255, 0, 0, 1)",
+            symbol: "circle", //"circle", "square", "diamond", "triangle" and "triangle-down".
+            lineWidth: null, //largura da inha de contorno
+            fillColor: "rgba(255, 0, 0, 1)", //cor do preenchimento do ponto
+            lineColor: "rgba(255, 0, 0, 1)", // cor do contorno do ponto
+            radius: 2,
+          },
+        },
+        {
+          name: "Reference",
+          type: undefined,
+          color: "rgba(0, 0, 255, 1)",
+          marker: {
+            symbol: "circle", //"circle", "square", "diamond", "triangle" and "triangle-down".
+            lineWidth: null, //largura da inha de contorno
+            fillColor: "rgba(0, 0, 255, 1)", //cor do preenchimento do ponto
+            lineColor: "rgba(0, 0, 255, 1)", // cor do contorno do ponto
+            radius: 2,
+          },
+        },
+      ],
+      navigation: {
+        buttonOptions: {
+          enabled: true,
+        },
+      },
     });
   }
 
   //https://medium.com/@danilodev.silva/angular-5-eventemitter-aprendendo-a-usar-input-e-output-property-56df9158de6b
   ngOnInit() {
-    this.handleGraphic()
-
+    this.handleGraphic();
   }
 
   ngDoCheck(): void {
     //Called every time that the input properties of a component or a directive are checked. Use it to extend change detection by performing a custom check.
     //Add 'implements DoCheck' to the class.
-    console.log(this.getFamily);
+    //console.log(this.getFamily);
+    this.myChart.series[0].setData(this.rgbData);
   }
+
+  teste() {}
 }

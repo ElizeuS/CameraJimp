@@ -1,5 +1,4 @@
-import { CameraService } from './../services/camera-service/camera-service';
-import { Component, OnInit } from "@angular/core";
+import { OnInit, Injectable } from "@angular/core";
 import * as Jimp from "jimp";
 import {
   CameraPreview,
@@ -8,30 +7,12 @@ import {
 } from "@ionic-native/camera-preview/ngx";
 import { Base64 } from "js-base64";
 import { File } from "@ionic-native/file/ngx";
-import { Brightness } from '@ionic-native/brightness/ngx';
 
-import { Options } from 'ng5-slider';
-
-interface RangeSliderModel {
-  minValue: number;
-  maxValue: number;
-  options: Options;
-
-}
-
-interface SimpleSliderModel {
-  value: number;
-  options: Options;
- }
-
-@Component({
-  selector: "app-home",
-  templateUrl: "home.page.html",
-  styleUrls: ["home.page.scss"],
+@Injectable({
+  providedIn: "root",
 })
 
-
-export class HomePage {
+export class CameraService {
   cameraPreviewOpts: CameraPreviewOptions = {
     x: 200, //Posição em que a câmera vai aparecer
     y: 200, //Posição em que a câmera vai aparecer
@@ -50,28 +31,19 @@ export class HomePage {
     quality: 50,
   };
 
-  arrayFamily: number[] = [1, 2, 3]
-
-  seriesTitle ="Teste"
-
   picture: any;
   code: string;
   blob: any;
   anyBuffer: ArrayBuffer;
   anyBase64: Base64;
 
-  currentRedV: number[]
-  currentGreenV: number[]
-  currentBlueV: number[]
+  currentRedV: number[];
+  currentGreenV: number[];
+  currentBlueV: number[];
 
   myImage: Jimp;
 
-  brightnessModel = 0.4;
-  value = 0.5;
-
-  constructor(private cameraPreview: CameraPreview, private file: File, private brightness: Brightness) {
-    this.brightness.setBrightness(this.brightnessModel);
-
+  constructor(private cameraPreview: CameraPreview, private file: File) {
     try {
       this.camOn();
     } catch (error) {
@@ -79,7 +51,7 @@ export class HomePage {
     }
   }
 
- async camOn() {
+  async camOn() {
     this.cameraPreview.startCamera(this.cameraPreviewOpts).then(
       (res) => {
         alert("cameraOn" + res);
@@ -89,10 +61,6 @@ export class HomePage {
         alert(err);
       }
     );
-  }
-
-  ngOnInit() {
-    console.log(this.arrayFamily)
   }
 
   async takePicture() {
@@ -113,7 +81,6 @@ export class HomePage {
       };
       this.anyBuffer = this._base64ToArrayBuffer(this.code)
       this.readImage(this.anyBuffer);
-
   }
 
   readImage(encodeB64: any) {
@@ -164,10 +131,8 @@ export class HomePage {
       return value / width;
     });
 
-
     this.takePicture();
 
-    // alert(`height: ${height} width: ${width} pixel: ${Jimp.intToRGBA(image.getPixelColor(7, 6)).r}`);
   }
 
   stopCam() {
@@ -189,7 +154,6 @@ export class HomePage {
     return [sumBlueV, sumGreenV, sumBlueV];
   }
 
-
   writeFile(something: any, filename: string) {
     this.blob = new Blob(something);
 
@@ -210,15 +174,4 @@ export class HomePage {
     }
     return bytes.buffer;
   }
-
-  ngDoCheck(): void {
-    //Called every time that the input properties of a component or a directive are checked. Use it to extend change detection by performing a custom check.
-    //Add 'implements DoCheck' to the class.
-    //this.arrayFamily.push(5)
-
-
-  }
 }
-
-
-//https://www.npmjs.com/package/highcharts

@@ -7,10 +7,8 @@
 <ion-content [fullscreen]="true">
   <div id="div1"> <img src="" id="image"></div>
 
-
-   <app-graph [getFamily] ="arrayFamily"></app-graph>
-
-
+   <app-graph [typeChart]="scatter" [xAxisText]="Pixel" [graphTitleText]="AIMCurve" [yAxisText]="Reflexivity"
+    [graphData] ="arrayFamily" [rgbData]="currentRedV"></app-graph>
 
   <div id="div2">
 
